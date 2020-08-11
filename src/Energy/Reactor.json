@@ -1,0 +1,25 @@
+{
+	description: "Planning to power a ship? Expect to get stranded in space without a reactor. Reactors generate massive amounts of power via nuclear fusion of hydrogen and other, weaker, elements. You'll get all the power you need, but bring a battery if you need speed. ",
+	levels: [
+		{
+			elements: [0.8]
+			reactionSpeed: [4, 8],
+			weight: [14, 30]
+		},
+		{
+			elements: [0.82, 0.2]
+			reactionSpeed: [4, 8],
+			weight: [18, 34]
+		},
+		{
+			elements: [0.84, 0.32, 0.14]
+			reactionSpeed: [4.5, 9],
+			weight: [24, 42]
+		},
+		{
+			elements: [0.86, 0.4, 0.22, 0.08]
+			reactionSpeed: [5, 11],
+			weight: [30, 56]
+		},
+	]
+}

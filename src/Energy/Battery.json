@@ -1,0 +1,17 @@
+{
+	description: "The modern version of supercapacitor technology, batterys are capable of tremendous power output, however store far less power than fuels. All of your ships power needs are supplied by the battery, which is recharged by the reactor. ",
+	levels: [
+		{
+			capacity: [20, 100],
+			weight: [4, 20],
+		},
+		{
+			capacity: [20, 150],
+			weight: [4, 24],
+		},
+		{
+			capacity: [30, 160],
+			weight: [4, 24],
+		},
+	]
+}
