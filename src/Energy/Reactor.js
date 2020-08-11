@@ -1,8 +1,7 @@
 //Reactor is a semi-passive power source. It refills the battery, using fuel from the fuel tank.
-const path = require("path")
-const utils = require(path.join(__dirname, "../", "utils.js"))
+const utils = require("../utils.js")
 
-let assets = utils.loadAssetJSON(__filename)
+let assets = utils.loadAssetJSON("Energy/Reactor.js")
 
 class Reactor {
 	constructor(config = {}) {

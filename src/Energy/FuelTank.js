@@ -1,8 +1,7 @@
 //FuelTank stores the fuels available for the reactor.
-const path = require("path")
-const utils = require(path.join(__dirname, "../", "utils.js"))
+const utils = require("../utils.js")
 
-let assets = utils.loadAssetJSON(__filename)
+let assets = utils.loadAssetJSON("Energy/FuelTank.js")
 
 class FuelTank {
 	constructor(config = {}) {

@@ -1,8 +1,7 @@
 //Battery is the active power source. Any power needs come out of the battery. Power drains in excess of current battery capacity will need to wait on the reactor.
-const path = require("path")
-const utils = require(path.join(__dirname, "../", "utils.js"))
+const utils = require("../utils.js")
 
-let assets = utils.loadAssetJSON(__filename)
+let assets = utils.loadAssetJSON("Energy/Battery.js")
 
 class Battery {
 	constructor(config = {}) {

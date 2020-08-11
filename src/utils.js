@@ -1,19 +1,5 @@
-const fs = require("fs")
-const path = require("path")
-
 function loadAssetJSON(filePath) {
-	filePath = path.join(path.dirname(filePath), path.basename(filePath, ".js") + ".json")
-	let contents = fs.readFileSync(filePath, {encoding: "utf-8"})
-	//TODO: We should use a javascript object-like JSON parser.
-	let obj;
-	try {
-		eval("obj  = " + contents)
-	}
-	catch (e) {
-		console.error(e)
-		throw "Failed to parse JSON asset at " + filePath
-	}
-	return obj
+	return window.jsonAssets[filePath]
 }
 
 function relativeCost(current, low, high, exponent = 1.4) {
