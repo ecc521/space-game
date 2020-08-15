@@ -1,7 +1,9 @@
 const webpack = require('webpack');
 const WebpackShellPlugin = require('webpack-shell-plugin');
 
-let compiler = webpack({
+//Non-minified build is much faster, but accidental commits with it are possible. We'll build both.
+
+let config = {
 	mode: "production", //Build for production
 	entry: {
 		"packages/index.js": "./src/index.js",
@@ -50,7 +52,11 @@ let compiler = webpack({
 			}
 		]
 	}
-});
+}
+
+let compiler = webpack(config);
+config.optimization.minimize = true
+let minimizingCompiler = webpack(config);
 
 
 
@@ -83,4 +89,34 @@ compiler.watch({
 		  colors: true  // Add console colors
 		})
 	);
+
+	console.log("Running minimized build\n")
+
+	minimizingCompiler.run((err, stats) => {
+	  if (err) {
+		console.error(err.stack || err);
+		if (err.details) {
+		  console.error(err.details);
+		}
+		return;
+	  }
+
+	  const info = stats.toJson();
+
+	  if (stats.hasErrors()) {
+		console.error(info.errors.join(""));
+	  }
+
+	  if (stats.hasWarnings()) {
+		console.warn(info.warnings.join(""));
+	  }
+
+	  // Log result...
+		console.log(
+			stats.toString({
+			  chunks: false,  // Makes the build much quieter
+			  colors: true  // Add console colors
+			})
+		);
+	})
 })

@@ -6,6 +6,7 @@ let assets = utils.loadAssetJSON("Energy/FuelTank.js")
 class FuelTank {
 	constructor(config = {}) {
 		this.capacity = config.capacity
+
 	}
 
 	static description = assets.description

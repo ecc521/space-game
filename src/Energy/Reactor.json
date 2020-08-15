@@ -1,5 +1,13 @@
 {
 	description: "Planning to power a ship? Expect to get stranded in space without a reactor. Reactors generate massive amounts of power via nuclear fusion of hydrogen and other, weaker, elements. You'll get all the power you need, but bring a battery if you need speed. ",
+	elementNames: [
+		"Hydrogen",
+		"Helium",
+		"Carbon",
+		"Neon",
+		"Oxygen",
+		"Silicon"
+	],
 	levels: [
 		{
 			elements: [0.8],

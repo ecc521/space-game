@@ -4,10 +4,12 @@ const utils = require("../utils.js")
 let assets = utils.loadAssetJSON("Energy/Reactor.js")
 
 class Reactor {
-	constructor(config = {}) {
 
+	constructor(config = {}) {
+		
 	}
 
+	static elementNames = assets.elementNames
 	static description = assets.description
 	static levels = assets.levels
 
