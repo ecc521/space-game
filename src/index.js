@@ -36,7 +36,14 @@ document.body.appendChild(app.view);
 	loader.add("vortex", "assets/icons/vortex.svg")
 
 	loader.add("techtree", "assets/interface/techtree.svg")
-
+	loader.add("credits", "assets/interface/credits.svg")
+	loader.add("battery", "assets/interface/battery.svg")
+	loader.add("hydrogen", "assets/interface/hydrogen.svg")
+	loader.add("helium", "assets/interface/helium.svg")
+	loader.add("carbon", "assets/interface/carbon.svg")
+	loader.add("neon", "assets/interface/neon.svg")
+	loader.add("oxygen", "assets/interface/oxygen.svg")
+	loader.add("silicon", "assets/interface/silicon.svg")
 
 	for (let i=1;i<=5;i++) {
 		loader.add("level" + i + "ship", "assets/ships/level" + i + ".svg")
@@ -81,6 +88,7 @@ document.body.appendChild(app.view);
 	window.FuelTank = require("./Energy/FuelTank.js")
 	window.Reactor = require("./Energy/Reactor.js")
 	window.TechTree = require("./TechTree.js")
+	window.ResourceView = require("./ResourceView.js")
 	let tech = new TechTree();
 	stage.addChild(tech.sprite);
 	tech.resize()
