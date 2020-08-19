@@ -10,7 +10,6 @@ class ResourceView {
 			let ratio = 8
 			let baseWidth = app.renderer.width / app.renderer.resolution / ratio
 			let width = Math.max(100, Math.min(baseWidth, 200)) //Clamp
-			console.log(width)
 			let verticalOffset = 0
 
 			if (obj.credits !== undefined) {
@@ -19,7 +18,6 @@ class ResourceView {
 				creditsIcon.height = creditsIcon.width
 				creditsIcon.x = width
 				creditsIcon.anchor.x = 1
-				console.log(creditsIcon)
 				this.container.addChild(creditsIcon)
 
 				let credits = new PIXI.Text(obj.credits, {
@@ -30,7 +28,6 @@ class ResourceView {
 				credits.x = width - credits.width - creditsIcon.width - width / 20 // width/20 for spacing.
 				credits.y = creditsIcon.y + creditsIcon.height / 2
 				credits.anchor.y = 0.5
-				console.log(credits)
 				this.container.addChild(credits)
 				verticalOffset += creditsIcon.height
 			}
@@ -57,7 +54,6 @@ class ResourceView {
 					renderWidths.push(current)
 				}
 
-				console.log(renderWidths)
 				//Draw rectangles for each element, overlapping, to show a distribution of per element power
 				let elementColors = [0xBB00FF, 0x2991DB, 0xd4b22c, 0xde7147, 0x6d4ade, 0x696cbc]
 				for (let i=renderWidths.length - 1;i>=0;i--) {
@@ -67,9 +63,6 @@ class ResourceView {
 					graphic.endFill()
 
 				}
-
-				console.log(graphic)
-
 
 				//We'll add text showing the remaining fuel. If above 50%, show in tank, else to left.
 				let text = new PIXI.Text(current, {
@@ -102,15 +95,29 @@ class ResourceView {
 				let max = obj.battery[1]
 				let percentage = current/max
 
-				let batteryIcon = new PIXI.Sprite(resources.battery.texture)
-				batteryIcon.y = verticalOffset
-				let downsize = batteryIcon.width / width
-				batteryIcon.width /= downsize
-				batteryIcon.height /= downsize
-				batteryIcon.height /= 1.8 //The battery is a bit tall. Shrink it.
+
+				function generateBatteryIcon() {
+					let batteryIcon = new PIXI.Sprite(resources.battery.texture)
+					batteryIcon.y = verticalOffset
+					let downsize = batteryIcon.width / width
+					batteryIcon.width /= downsize
+					batteryIcon.height /= downsize
+					batteryIcon.height /= 1.8 //The battery is a bit tall. Shrink it.
+					return batteryIcon
+				}
+
+				let batteryIcon = generateBatteryIcon()
+
+				let maxBoundsIcon = generateBatteryIcon()
+				//TODO: This doesn't produce a purely solid color image.
+				let filter = new PIXI.filters.ColorMatrixFilter()
+				filter.greyscale(1)
+				maxBoundsIcon.filters = [filter]
+				maxBoundsIcon.alpha = .1
 
 				batteryIcon.width *= percentage
 				batteryIcon.x = width - batteryIcon.width
+
 
 				//We'll add text showing the remaining power. If battery is above 50%, show black in battery, else white to left.
 				let text = new PIXI.Text(current, {
@@ -130,9 +137,8 @@ class ResourceView {
 					text.x = width - batteryIcon.width - text.width - width / 20 // width/20 for spacing.
 				}
 
-				console.log(text)
-				console.log(batteryIcon)
 				this.container.addChild(batteryIcon)
+				this.container.addChild(maxBoundsIcon)
 				this.container.addChild(text)
 				verticalOffset += batteryIcon.height
 			}
@@ -141,7 +147,7 @@ class ResourceView {
 				let elementNames = utils.loadAssetJSON("Energy/Reactor.js").elementNames
 				for (let i=0;i<obj.elements.length;i++) {
 					let amount = obj.elements[i]
-					if (!amount) {continue;} //We'll avoid rendering elements that we are out of, or have not produced yet. 
+					if (!amount) {continue;} //We'll avoid rendering elements that we are out of, or have not produced yet.
 					let name = elementNames[i]
 					let sprite = new PIXI.Sprite(resources[name.toLowerCase()].texture)
 					sprite.width = width / 5
@@ -159,11 +165,8 @@ class ResourceView {
 					text.x = width - text.width - sprite.width - width / 20 // width/20 for spacing.
 					text.anchor.y = 0.5
 
-
 					this.container.addChild(sprite)
 					this.container.addChild(text)
-					console.log(sprite)
-					console.log(text)
 
 					verticalOffset += sprite.height
 				}
@@ -175,17 +178,3 @@ class ResourceView {
 }
 
 module.exports = ResourceView
-
-/*
-a = new ResourceView()
-a.render({
-	credits: 500,
-	battery: [100, 150],
-	elements: [400, 250, 133, 112, 76, 22],
-	fuel: {
-		current: 100,
-		max: 200,
-		elementDistribution: [0.6, 0.2, 0.1, 0.05, 0.03, 0.02]
-	}
-})
-*/

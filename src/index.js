@@ -93,32 +93,17 @@ document.body.appendChild(app.view);
 	stage.addChild(tech.sprite);
 	tech.resize()
 
-	stage.interactive = true
-	var isDragging = false,
-        prevX, prevY;
-
-    stage.on("mousedown", function (moveData) {
-      var pos = moveData.data.global;
-      prevX = pos.x; prevY = pos.y;
-      isDragging = true;
-  });
-
-    stage.on("mousemove", function (moveData) {
-      if (!isDragging) {
-        return;
-      }
-      var pos = moveData.data.global;
-      var dx = pos.x - prevX;
-      var dy = pos.y - prevY;
-
-      stage.x += dx;
-      stage.y += dy;
-      prevX = pos.x; prevY = pos.y;
-  });
-
-    stage.on("mouseup", function (moveData) {
-      isDragging = false;
-  });
+	window.resourceView = new ResourceView()
+	resourceView.render({
+		credits: 500,
+		battery: [100, 150],
+		elements: [400, 250, 133, 112, 76, 22],
+		fuel: {
+			current: 100,
+			max: 200,
+			elementDistribution: [0.6, 0.2, 0.1, 0.05, 0.03, 0.02]
+		}
+	})
 
 	// load the texture we need
 	// This creates a texture from a 'bunny.png' image
@@ -135,6 +120,32 @@ document.body.appendChild(app.view);
 
 	window.bunny = bunny
 
+	bunny.interactive = true
+	var isDragging = false,
+        prevX, prevY;
+
+    bunny.on("mousedown", function (moveData) {
+      var pos = moveData.data.global;
+      prevX = pos.x; prevY = pos.y;
+      isDragging = true;
+  });
+
+    bunny.on("mousemove", function (moveData) {
+      if (!isDragging) {
+        return;
+      }
+      var pos = moveData.data.global;
+      var dx = pos.x - prevX;
+      var dy = pos.y - prevY;
+
+      bunny.x += dx;
+      bunny.y += dy;
+      prevX = pos.x; prevY = pos.y;
+  });
+
+    bunny.on("mouseup", function (moveData) {
+      isDragging = false;
+  });
 
 	// Add the bunny to the scene we are building
 	app.stage.addChild(bunny);
