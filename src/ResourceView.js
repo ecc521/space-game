@@ -8,7 +8,9 @@ class ResourceView {
 		this.render = (function(obj = {}) {
 			this.container.removeChildren()
 			let ratio = 8
-			let width = app.renderer.width / app.renderer.resolution / ratio
+			let baseWidth = app.renderer.width / app.renderer.resolution / ratio
+			let width = Math.max(100, Math.min(baseWidth, 200)) //Clamp
+			console.log(width)
 			let verticalOffset = 0
 
 			if (obj.credits !== undefined) {
@@ -21,7 +23,8 @@ class ResourceView {
 				this.container.addChild(creditsIcon)
 
 				let credits = new PIXI.Text(obj.credits, {
-					font: width/3 + "px Arial",
+					fontFamily: "Arial",
+					fontSize: width/6,
 					fill: "white"
 				});
 				credits.x = width - credits.width - creditsIcon.width - width / 20 // width/20 for spacing.
@@ -70,7 +73,8 @@ class ResourceView {
 
 				//We'll add text showing the remaining fuel. If above 50%, show in tank, else to left.
 				let text = new PIXI.Text(current, {
-					font: width/3 + "px Arial",
+					fontFamily: "Arial",
+					fontSize: width/6,
 					fill: "white"
 				});
 
@@ -110,7 +114,8 @@ class ResourceView {
 
 				//We'll add text showing the remaining power. If battery is above 50%, show black in battery, else white to left.
 				let text = new PIXI.Text(current, {
-					font: width/3 + "px Arial",
+					fontFamily: "Arial",
+					fontSize: width/6,
 					fill: "black"
 				});
 
@@ -136,6 +141,7 @@ class ResourceView {
 				let elementNames = utils.loadAssetJSON("Energy/Reactor.js").elementNames
 				for (let i=0;i<obj.elements.length;i++) {
 					let amount = obj.elements[i]
+					if (!amount) {continue;} //We'll avoid rendering elements that we are out of, or have not produced yet. 
 					let name = elementNames[i]
 					let sprite = new PIXI.Sprite(resources[name.toLowerCase()].texture)
 					sprite.width = width / 5
@@ -145,7 +151,8 @@ class ResourceView {
 					sprite.y = verticalOffset
 
 					let text = new PIXI.Text(amount, {
-						font: width/3 + "px Arial",
+						fontFamily: "Arial",
+						fontSize: width/6,
 						fill: "white"
 					});
 					text.y = verticalOffset + sprite.height / 2
@@ -162,7 +169,7 @@ class ResourceView {
 				}
 			}
 
-			this.container.x = width * (ratio - 1)
+			this.container.x = baseWidth * ratio - width
 		}).bind(this)
 	}
 }
