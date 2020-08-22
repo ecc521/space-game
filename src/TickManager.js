@@ -13,7 +13,7 @@ class TickManager {
 
 		this.processTick = function() {
 			//Proceed through all orders.
-			
+
 		}
 	}
 }

@@ -5,8 +5,10 @@ let assets = utils.loadAssetJSON("Energy/FuelTank.js")
 
 class FuelTank {
 	constructor(config = {}) {
+		if (!config.capacity) {throw "Must pass capacity, which must be greater than 0"}
+		
 		this.capacity = config.capacity
-
+		this.current = [config.capacity]
 	}
 
 	static description = assets.description

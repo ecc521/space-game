@@ -14,11 +14,12 @@ window.app = app
 
 const stage = app.stage
 window.stage = stage
+stage.sortableChildren = true //Allow zIndex to work.
 
 // The application will create a canvas element for you that you
 // can then insert into the DOM
 document.body.appendChild(app.view);
-
+globalThis.physicsTickRate = 10
 
 
 
@@ -26,7 +27,6 @@ document.body.appendChild(app.view);
 	let loader = new PIXI.Loader()
 	console.log(loader)
 	loader.add("jsonAssets", "packages/assets.json")
-	loader.add("spaceship", "assets/triangle-ship.svg")
 
 	loader.add("lightShield", "assets/icons/lightShield.svg")
 	loader.add("standardShield", "assets/icons/standardShield.svg")
@@ -49,7 +49,15 @@ document.body.appendChild(app.view);
 		loader.add("level" + i + "ship", "assets/ships/level" + i + ".svg")
 	}
 
-	loader.onProgress.add(console.log)
+	for (let i=0;i<14;i++) {
+		let extension = ".png"
+		if ([7, 11].includes(i)) {extension = ".svg"}
+		loader.add("planet" + i, "assets/objects/planet" + i + extension)
+	}
+
+	loader.onProgress.add(function(event, item) {
+		console.log("Loaded " + item.url + ". " + Math.round(event.progress) + "% complete. ")
+	})
 
 	await new Promise((resolve, reject) => {
 		loader.load(resolve)
@@ -89,6 +97,8 @@ document.body.appendChild(app.view);
 	window.Reactor = require("./Energy/Reactor.js")
 	window.TechTree = require("./TechTree.js")
 	window.ResourceView = require("./ResourceView.js")
+	window.Map = require("./Map.js")
+
 	let tech = new TechTree();
 	stage.addChild(tech.sprite);
 	tech.resize()

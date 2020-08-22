@@ -5,6 +5,8 @@ let assets = utils.loadAssetJSON("Energy/Battery.js")
 
 class Battery {
 	constructor(config = {}) {
+		if (!config.capacity) {throw "Must pass capacity, which must be greater than 0"}
+
 		this.capacity = config.capacity
 		this.chargeLevel = this.capacity //Batteries will start full.
 

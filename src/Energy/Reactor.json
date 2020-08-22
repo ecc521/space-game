@@ -4,9 +4,17 @@
 		"Hydrogen",
 		"Helium",
 		"Carbon",
-		"Neon",
+		"Neon", //We are going to pretend that Neon generates significantly more energy than oxygen, even though oxygen-16 is very stable.
 		"Oxygen",
 		"Silicon"
+	],
+	elementProducts: [
+		[0,1,0,0,0,0], //Hydrogen => Helium
+		[0,0,0.5,0,0.5,0], //Helium => Carbon, Oxygen (Skip Neon)
+		[0,0,0,1,0,0], //We'll use Carbon => Neon
+		[0,0,0,0,1,0], //We'll use Neon => Oxygen
+		[0,0,0,0,0,1], //We'll use Oxygen => Silicon
+		[0,0,0,0,0,0], //Nothing after Silicon. Discard products. (Iron)
 	],
 	levels: [
 		{
@@ -20,14 +28,31 @@
 			weight: [18, 34]
 		},
 		{
-			elements: [0.84, 0.32, 0.14],
+			elements: [0.84, 0.32, 0.20], //Since Carbon is produced in 1/2 the quantity, we'll start it off higher.
 			reactionSpeed: [4.5, 9],
 			weight: [24, 42]
 		},
 		{
-			elements: [0.86, 0.4, 0.22, 0.08],
+			elements: [0.86, 0.4, 0.24, 0.18],  //Since Neon is produced by carbon, and carbon is 1/2 quanity, Neon will start off higher as well.
 			reactionSpeed: [5, 11],
 			weight: [30, 56]
 		},
+		{
+			elements: [0.87, 0.41, 0.32, 0.24, 0.1],
+			reactionSpeed: [5.5, 12],
+			weight: [36, 64]
+		},
+		{
+			elements: [0.88, 0.42, 0.35, 0.31, 0.16, 0.08],
+			reactionSpeed: [7, 14],
+			weight: [46, 78]
+		},
+
+		//Planned element power max
+		{
+			elements: [0.92, 0.46, 0.38, 0.34, 0.33, 0.26],
+			reactionSpeed: [7.5, 15.5],
+			weight: [54, 90]
+		}
 	]
 }
