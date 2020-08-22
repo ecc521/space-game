@@ -5,6 +5,8 @@ let assets = utils.loadAssetJSON("Energy/Reactor.js")
 
 class Reactor {
 	constructor(config = {}) {
+		this.verboseLogging = config.verboseLogging || false
+
 		if (!config.battery) {
 			throw "Must pass Battery"
 		}
@@ -56,31 +58,31 @@ class Reactor {
 				let currentElementAmount = this.fuelTank.current[elementIndex]
 				let currentElementPower = currentElementAmount * elementValue
 
-				console.log(currentElementAmount, amountProcessable, energyLimit/elementValue)
+				if (this.verboseLogging) {console.log(currentElementAmount, amountProcessable, energyLimit/elementValue)}
 				let amountProcessed = Math.min(currentElementAmount, amountProcessable, energyLimit/elementValue)
 				let powerGenerated = amountProcessed * elementValue
 
-				console.log(amountProcessed, powerGenerated)
+				if (this.verboseLogging) {console.log(amountProcessed, powerGenerated)}
 
 				if (isNaN(powerGenerated)) {continue} //This will be caused if currentElementAmount is 0.
 				if (amountProcessed === 0) {continue}
 
 				amountProcessable -= amountProcessed
 				this.fuelTank.current[elementIndex] -= amountProcessed
-				console.log("Consumed " + amountProcessed + " of element " + elementIndex)
+				if (this.verboseLogging) {console.log("Consumed " + amountProcessed + " of element " + elementIndex)}
 
 				//Add products.
 				let products = Reactor.elementProducts[elementIndex]
 				products.forEach((amount, index) => {
-					console.log("Produced " + (amount * amountProcessed) + " of element " + index)
+					if (this.verboseLogging) {console.log("Produced " + (amount * amountProcessed) + " of element " + index)}
 					this.fuelTank.current[index] += amount * amountProcessed
 				})
 
-				console.log(powerGenerated)
+				if (this.verboseLogging) {console.log(powerGenerated)}
 				this.battery.charge(powerGenerated)
 			}
 
-			console.log(amountProcessable)
+			if (this.verboseLogging) {console.log(amountProcessable)}
 
 			if (amountProcessable > 0) {
 				//TODO: Perform fission.
@@ -99,8 +101,6 @@ class Reactor {
 				while (this.elements[++elementIndex]) {
 					let currentElementAmount = this.fuelTank.current[elementIndex]
 					let amountProcessed = Math.min(currentElementAmount, amountProcessable)
-					console.log(elementIndex)
-					console.log(amountProcessable)
 
 					if (amountProcessed === 0) {continue}
 
@@ -111,12 +111,11 @@ class Reactor {
 					let amountDownwards = totalUpwardPower / this.elements[elementIndex]
 
 					this.fuelTank.current[elementIndex] -= amountProcessed
-					console.log("Consumed " + amountProcessed + " of element " + elementIndex)
+					if (this.verboseLogging) {console.log("Consumed " + amountProcessed + " of element " + elementIndex)}
 
-					console.log(amountDownwards + 1)
 					//Send the fission product up.
 					this.fuelTank.current[elementIndex - 1] += amountProcessed / (amountDownwards + 1)
-					console.log("Produced " + (amountProcessed / (amountDownwards + 1)) + " of element " + (elementIndex - 1))
+					if (this.verboseLogging) {console.log("Produced " + (amountProcessed / (amountDownwards + 1)) + " of element " + (elementIndex - 1))}
 
 
 					//Send the fusion products down.
@@ -124,7 +123,7 @@ class Reactor {
 					products.forEach((amount, index) => {
 						//Amount: Percentage of products that are said element.
 						let produced = amount * (1 - 1/(amountDownwards + 1)) * amountProcessed
-						console.log("Produced " + produced + " of element " + index)
+						if (this.verboseLogging) {console.log("Produced " + produced + " of element " + index)}
 						this.fuelTank.current[index] += produced
 					})
 
