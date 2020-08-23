@@ -45,6 +45,12 @@ globalThis.physicsTickRate = 10
 	loader.add("oxygen", "assets/interface/oxygen.svg")
 	loader.add("silicon", "assets/interface/silicon.svg")
 
+	loader.add("space1", "assets/backgrounds/space1.jpeg")
+	loader.add("space2", "assets/backgrounds/space2.jpeg")
+	loader.add("space3", "assets/backgrounds/space3.jpeg")
+
+
+
 	for (let i=1;i<=5;i++) {
 		loader.add("level" + i + "ship", "assets/ships/level" + i + ".svg")
 	}
@@ -115,10 +121,19 @@ globalThis.physicsTickRate = 10
 		}
 	})
 
+	window.map = new Map({
+		width: 2000,
+		height: 2000,
+		bounds: {}, //Use defaults
+		backgroundOptions: ["space1", "space2", "space3"]
+	})
+
+	stage.addChild(map.container)
+
 	// load the texture we need
 	// This creates a texture from a 'bunny.png' image
 
-	const bunny = new PIXI.Sprite(resources.level1ship.texture);
+	/*const bunny = new PIXI.Sprite(resources.level1ship.texture);
 
 	// Setup the position of the bunny
 	bunny.x = app.renderer.width / 4;
@@ -167,6 +182,6 @@ globalThis.physicsTickRate = 10
 	app.ticker.add(() => {
 		 // each frame we spin the bunny around a bit
 		//bunny.rotation += 0.01;
-	});
+	});*/
 
 }())

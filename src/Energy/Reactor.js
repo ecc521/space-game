@@ -44,6 +44,27 @@ class Reactor {
 			}
 		}
 
+		this.getRemainingPower = (function() {
+			let maximum = Reactor.computeTotalPower(this.elements, 0, this.fuelTank.capacity)
+			let energyDist = this.fuelTank.current.map(((amount, index) => {
+				return Reactor.computeTotalPower(this.elements, index, amount)
+			}).bind(this))
+
+			let current = energyDist.reduce((a,b) => {return a+b}, 0)
+
+			//Sum of elementDistribution should be 1.
+			let elementDistribution = energyDist.map((amount) => {
+				return amount / current
+			})
+
+			//Format to go directly into ResourceView fuel bar config. 
+			return {
+				current,
+				max: maximum,
+				elementDistribution
+			}
+		}).bind(this)
+
 		this.onTick = (function() {
 			adjustFuelTank(this.fuelTank.current, this.elements.length)
 
