@@ -63,7 +63,6 @@ class Map {
 			let asPercentageX = relativeX / this.container.width
 			let asPercentageY = relativeY / this.container.height
 
-			console.log(scale)
 			//Scale map
 			this.container.scale.set(scale)
 
@@ -76,15 +75,20 @@ class Map {
 		}).bind(this)
 
 		let bound = (function(bounceFactor = 1.5) {
+			if (scale < 0) {
+				//The user must've scrolled out *insanely* fast. Correct this before proceeding.
+				zoom(-scale * 2, undefined, undefined, true)
+				console.warn("Inverted negative scale. ")
+			}
+
 			let xDiff = -(this.bounds.xmax - this.bounds.xmin)
 			let yDiff = -(this.bounds.ymax - this.bounds.ymin)
 
 			let requiredScale = Math.max(xDiff/this.container.width, yDiff/this.container.height)
 
 			//Zoom such that both axes can fit the screen.
-			console.log(requiredScale, scale)
 			if (requiredScale > 1) {
-				zoom((requiredScale - 1) * scale)
+				zoom(requiredScale - 1, undefined, undefined, true)
 			}
 
 			//Translate such that we will the entire screen.
@@ -168,6 +172,59 @@ class Map {
 			bound(1)
 		}
 
+		//The rate of key repeats may vary between devices. We'll make it constant.
+		let intervals = Array(4)
+		let toggleInterval = (function toggleInterval(event, enable = true) {
+			let movementFactor = 1/300
+			let millisecondsPerMove = 16
+			let x = movementFactor * this.container.width
+			let y = movementFactor * this.container.height
+			let position = 0
+
+			switch (event.code) {
+				case "KeyW":
+				case "ArrowUp":
+					x *= 0
+					break;
+				case "KeyS":
+				case "ArrowDown":
+					x *= 0
+					y *= -1
+					position = 1
+					break;
+				case "KeyA":
+				case "ArrowLeft":
+					y *= 0
+					position = 2
+					break;
+				case "KeyD":
+				case "ArrowRight":
+					x *= -1
+					y *= 0
+					position = 3
+					break;
+			}
+
+			if (enable === true) {
+				if (!intervals[position]) {
+					intervals[position] = setInterval(function() {
+						translate(x, y)
+						bound(1) //Bounce none.
+					}, millisecondsPerMove)
+				}
+			}
+			else if (intervals[position]) {
+				clearInterval(intervals[position])
+				delete intervals[position]
+			}
+		}).bind(this)
+
+		document.addEventListener("keydown", toggleInterval)
+
+		document.addEventListener("keyup", function(event) {
+			toggleInterval(event, false)
+		})
+
 		this.container.on("mouseup", end)
 		this.container.on("mouseout", end)
 		this.container.on("touchend", end)
@@ -176,7 +233,6 @@ class Map {
 
 		document.body.addEventListener("wheel", (function(event){
 		    event.preventDefault()
-			console.log(event)
 			zoom(event.deltaY * -0.001, event.pageX, event.pageY)
 			bound()
 		}).bind(this), {passive: false});
