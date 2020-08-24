@@ -43,8 +43,16 @@ class Map {
 		}).bind(this)
 
 		let scale = 1
-		let zoom = (function zoom(factorChange = 0, centerX = 0, centerY = 0) {
-			//Note: centerX and centerY are page coordinates. They are not adjusted to container position on stage. 
+		let zoom = (function zoom(factorChange = 0, centerX = 0, centerY = 0, noFactorAdjustment = false) {
+			//Note: centerX and centerY are page coordinates. They are not adjusted to container position on stage.
+			//Also, we do not call bound() here to avoid double calls.
+
+			if (!noFactorAdjustment) {
+				//Adjust factorChange to make scaling exponential.
+				//Note: This is faster at backing out than moving in. A factorChange of 0.5 (never happens) would result in 50% zoom in, 100% zoom out.
+				//We may want to fix this, although rapidly zooming out is probably more important than rapidly zooming in.
+				factorChange = scale * factorChange
+			}
 			scale += factorChange
 
 			//Determine the mouse pointer location in the map
@@ -59,15 +67,37 @@ class Map {
 			//Scale map
 			this.container.scale.set(scale)
 
-			//Determine the X coordinate in map using the relative location
+			//Determine the new X coordinate in map using the relative location
 			let newRelativeX = this.container.width * asPercentageX
 			let newRelativeY = this.container.height * asPercentageY
 
-			console.log(relativeX, relativeY)
-			console.log(newRelativeX, newRelativeY)
-
 			//Translate map by the difference in old coordinates under mouse and new coordinates under mouse.
 			translate(relativeX - newRelativeX, relativeY - newRelativeY)
+		}).bind(this)
+
+		let bound = (function(bounceFactor = 1.5) {
+			let xDiff = -(this.bounds.xmax - this.bounds.xmin)
+			let yDiff = -(this.bounds.ymax - this.bounds.ymin)
+
+			let requiredScale = Math.max(xDiff/this.container.width, yDiff/this.container.height)
+
+			//Zoom such that both axes can fit the screen.
+			console.log(requiredScale, scale)
+			if (requiredScale > 1) {
+				zoom((requiredScale - 1) * scale)
+			}
+
+			//Translate such that we will the entire screen.
+			let newX = Math.min(this.bounds.xmax, this.container.x)
+			let newY = Math.min(this.bounds.ymax, this.container.y)
+
+			//Maximums must be within bounds.x/ymin of edges
+			newX = Math.max(newX, -(this.container.width-this.bounds.xmin))
+			newY = Math.max(newY, -(this.container.height-this.bounds.ymin))
+
+			//If bounceFactor is 1, we will not bounce at all. bounceFactor dictates the 1/ratio correction we apply.
+			//This can help the user know it is the edge of the map, without letting them go too far off it.
+			translate((newX - this.container.x)/bounceFactor, (newY - this.container.y)/bounceFactor)
 		}).bind(this)
 
 		var isDragging = false,
@@ -102,7 +132,8 @@ class Map {
 				startYAvg = (e.data.originalEvent.touches[0].pageY + e.data.originalEvent.touches[1].pageY)/2
 			}
 			if (previousDist) {
-				zoom((dist - previousDist) / 1000, startXAvg, startYAvg)
+				let zoomFactor = 1/700
+				zoom((dist - previousDist) * zoomFactor, startXAvg, startYAvg)
 			}
 			previousDist = dist
 		}
@@ -122,6 +153,7 @@ class Map {
 			if (isZooming) {
 				pinchMove(moveData);
 			}
+			bound()
 		}
 
 		this.container.on("mousemove", move)
@@ -133,9 +165,11 @@ class Map {
 			previousDist = null;
 			startXAvg = null;
 			startYAvg = null;
+			bound(1)
 		}
 
 		this.container.on("mouseup", end)
+		this.container.on("mouseout", end)
 		this.container.on("touchend", end)
 
 		this.container.on("wheel", console.log)
@@ -144,6 +178,7 @@ class Map {
 		    event.preventDefault()
 			console.log(event)
 			zoom(event.deltaY * -0.001, event.pageX, event.pageY)
+			bound()
 		}).bind(this), {passive: false});
 
 
