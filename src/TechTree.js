@@ -2,6 +2,7 @@ class TechTree {
 	constructor() {
 		this.sprite = new PIXI.Sprite(resources.techtree.texture)
 		this.sprite.interactive = true
+		this.sprite.zIndex = 5
 
 		this.resize = (function() {
 			this.sprite.width = Math.max(app.renderer.width / 10 / window.devicePixelRatio, 64)

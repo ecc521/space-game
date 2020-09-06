@@ -7,7 +7,7 @@ class Map {
 		this.height = config.height
 
 		this.container = new PIXI.Container()
-		this.container.zIndex = -1
+		this.container.zIndex = 1
 		console.log(this.container)
 
 		this.backgroundOptions = config.backgroundOptions
@@ -27,15 +27,16 @@ class Map {
 		this.container.y = 0
 
 		if (config.backgroundOptions) {
-			this.background = new PIXI.Sprite(resources[this.backgroundOptions[Math.floor(Math.random() * this.backgroundOptions.length)]].texture)
+			let textures = config.backgroundOptions.textures
+			this.background = new PIXI.Sprite(resources[textures[Math.floor(Math.random() * textures.length)]].texture)
 			this.background.width = this.width
 			this.background.height = this.height
 			this.container.addChild(this.background)
-			this.container.zIndex = -1
 		}
 
 		//Make map draggable
 		this.container.interactive = true
+		this.container.sortableChildren = true //Allow zIndex
 		this.scale = 1
 
 		this.translate = (function translate(x, y) {

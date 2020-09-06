@@ -3,7 +3,7 @@ const utils = require("./utils.js")
 class ResourceView {
 	constructor() {
 		this.container = new PIXI.Container()
-		this.container.zIndex = 100 //Very few things, if any, should go on top of this. 
+		this.container.zIndex = 100 //Very few things, if any, should go on top of this.
 		stage.addChild(this.container)
 
 		this.render = (function(obj = {}) {

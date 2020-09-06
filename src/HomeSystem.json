@@ -1,0 +1,60 @@
+{
+	//This is the initial configuration. Upgrades will cause this to change per player.
+
+	width: 5000,
+	height: 5000,
+	planets: [
+		{
+			name: "Ticypso", //Player can rename planets.
+			level: 1,
+			maxLevel: 10,
+			textureName: "planet14",
+			scan: 0,
+			position: [2400, 2600],
+			size: [250, 250] //Diameter. Increases from min to max with levels.
+		},
+		{
+			name: "Sennion",
+			level: 0, //Unexplored
+			maxLevel: 12,
+			textureName: "planet2",
+			scan: 0,
+			position: [2900, 3000],
+			size: [300, 300]
+
+		},
+		{
+			name: "Kizuetov",
+			level: 0,
+			maxLevel: 15,
+			textureName: "planet3",
+			scan: 1,
+			position: [2000, 2100],
+			size: [320, 320]
+		},
+		{
+			name: "Tonzerth",
+			level: 0,
+			maxLevel: 18,
+			textureName: "planet5",
+			scan: 2,
+			position: [2800, 2100],
+			size: [280, 280]
+		},
+	],
+	stations: [
+		{
+			type: "Scanner",
+			level: 1,
+			scans: 0,
+		},
+		{
+			type: "Shipyard",
+			level: 1,
+		}
+	],
+	resources: {
+		credits: 5000,
+		hydrogen: 5000
+	}
+}

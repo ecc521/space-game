@@ -1,14 +1,17 @@
 import * as PIXI from 'pixi.js';
 window.PIXI = PIXI
+PIXI.particles = require("pixi-particles")
 
 // The application will create a renderer using WebGL, if possible,
 // with a fallback to a canvas render. It will also setup the ticker
 // and the root stage PIXI.Container
+PIXI.Application.prototype.render = null; // Disable auto-rendering by removing the function
 const app = new PIXI.Application({
 	autoResize: true,
 	resolution: window.devicePixelRatio,
 	antialias: true,
-	resizeTo: window
+	//powerPreference: "high-performance", //"high-performance", "low-power" or "default".
+	resizeTo: window,
 });
 window.app = app
 
@@ -55,10 +58,10 @@ globalThis.physicsTickRate = 10
 		loader.add("level" + i + "ship", "assets/ships/level" + i + ".svg")
 	}
 
-	for (let i=0;i<14;i++) {
+	for (let i=0;i<15;i++) {
 		let extension = ".png"
 		if ([7, 11].includes(i)) {extension = ".svg"}
-		loader.add("planet" + i, "assets/objects/planet" + i + extension)
+		loader.add("planet" + i, "assets/objects/planets/planet" + i + extension)
 	}
 
 	loader.onProgress.add(function(event, item) {
@@ -104,6 +107,9 @@ globalThis.physicsTickRate = 10
 	window.TechTree = require("./TechTree.js")
 	window.ResourceView = require("./ResourceView.js")
 	window.Map = require("./Map.js")
+	window.ParticleTrail = require("./ParticleTrail.js")
+	window.HomeSystem = require("./HomeSystem.js")
+	window.utils = require("./utils.js")
 
 	let tech = new TechTree();
 	stage.addChild(tech.sprite);
@@ -121,67 +127,41 @@ globalThis.physicsTickRate = 10
 		}
 	})
 
-	window.map = new Map({
+	/*window.map = new Map({
 		width: 2000,
 		height: 2000,
 		bounds: {}, //Use defaults
 		backgroundOptions: ["space1", "space2", "space3"]
+	})*/
+
+
+	let config = utils.loadAssetJSON("HomeSystem.js")
+	Object.assign(config, {
+		bounds: {}, //Use defaults
+		backgroundOptions: {
+			textures: ["space1", "space2", "space3"],
+		}
 	})
+	window.map = new HomeSystem(config)
 
 	stage.addChild(map.container)
 
-	// load the texture we need
-	// This creates a texture from a 'bunny.png' image
+	/*window.particleTrail = new ParticleTrail({
+		parent: app.stage,
+		rotation: 90,
+		rotationVariance: 0,
+		speed: 0.05
+	})
+	particleTrail.emitter.spawnPos.x = 400
+	particleTrail.emitter.spawnPos.y = 400*/
 
-	/*const bunny = new PIXI.Sprite(resources.level1ship.texture);
+	window.frames = 0
 
-	// Setup the position of the bunny
-	bunny.x = app.renderer.width / 4;
-	bunny.y = app.renderer.height / 4;
-
-	// Rotate around the center
-	bunny.anchor.x = 0.5;
-	bunny.anchor.y = 0.5;
-
-	window.bunny = bunny
-
-	bunny.interactive = true
-	var isDragging = false,
-        prevX, prevY;
-
-    bunny.on("mousedown", function (moveData) {
-      var pos = moveData.data.global;
-      prevX = pos.x; prevY = pos.y;
-      isDragging = true;
-  });
-
-    bunny.on("mousemove", function (moveData) {
-      if (!isDragging) {
-        return;
-      }
-      var pos = moveData.data.global;
-      var dx = pos.x - prevX;
-      var dy = pos.y - prevY;
-
-      bunny.x += dx;
-      bunny.y += dy;
-      prevX = pos.x; prevY = pos.y;
-  });
-
-    bunny.on("mouseup", function (moveData) {
-      isDragging = false;
-  });
-
-	// Add the bunny to the scene we are building
-	app.stage.addChild(bunny);
-	bunny.interactive = true
-	bunny.on("click", console.log)
-	bunny.on("tap", console.log)
-
-	// Listen for frame updates
-	app.ticker.add(() => {
-		 // each frame we spin the bunny around a bit
-		//bunny.rotation += 0.01;
-	});*/
+	setInterval(function() {
+		window.frames++
+		app.renderer.render(app.stage)
+		particleTrail.animationFrame()
+		map.onTick()
+	}, 120)
 
 }())
